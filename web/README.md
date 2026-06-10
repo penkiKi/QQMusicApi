@@ -21,7 +21,7 @@ uv sync --group web
 uv run web/run.py
 ```
 
-服务启动后，访问 [http://localhost:8080/docs](http://localhost:8080/docs) 查看自动生成的 API 文档。
+服务启动后，访问 [http://localhost:10001/docs](http://localhost:10001/docs) 查看自动生成的 API 文档。
 
 ### Docker 部署
 
@@ -30,7 +30,7 @@ uv run web/run.py
 docker build -t qqmusic-api-web -f web/Dockerfile .
 
 # 运行容器
-docker run -p 8080:8080 \
+docker run -p 10001:10001 \
   -v ./web/data:/app/web/data \
   qqmusic-api-web
 ```

@@ -1,0 +1,81 @@
+name: Publish Docker image
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+env:
+  DEFAULT_IMAGE_REPOSITORY: qq-music-api-python
+
+jobs:
+  docker:
+    name: Build and push Docker image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Resolve Docker Hub image
+        id: image
+        env:
+          DOCKERHUB_REPOSITORY: ${{ vars.DOCKERHUB_REPOSITORY }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+        run: |
+          if [ -z "$DOCKERHUB_USERNAME" ]; then
+            echo "::error::Repository variable DOCKERHUB_USERNAME is required."
+            exit 1
+          fi
+
+          if [ -z "$DOCKERHUB_TOKEN" ]; then
+            echo "::error::Repository secret DOCKERHUB_TOKEN is required."
+            exit 1
+          fi
+
+          image="${DOCKERHUB_REPOSITORY:-$DOCKERHUB_USERNAME/$DEFAULT_IMAGE_REPOSITORY}"
+          image="$(printf "%s" "$image" | tr "[:upper:]" "[:lower:]")"
+
+          if ! printf "%s" "$image" | grep -Eq "^[a-z0-9][a-z0-9._-]*/[a-z0-9][a-z0-9._-]*$"; then
+            echo "::error::Docker image repository '$image' must look like 'namespace/repository'."
+            exit 1
+          fi
+
+          echo "name=$image" >> "$GITHUB_OUTPUT"
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v4
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          flavor: |
+            latest=false
+          images: ${{ steps.image.outputs.name }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=tag
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: web/Dockerfile
+          labels: ${{ steps.meta.outputs.labels }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}

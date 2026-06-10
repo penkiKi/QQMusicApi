@@ -381,7 +381,7 @@
 * 默认开启 Http2 ([b6ea59e](https://github.com/L-1124/QQMusicApi/commit/b6ea59ec71ce669fe6f47e7c45017d0d0eb13d4d)) by [@L-1124](https://github.com/L-1124)
 * 手动清除API缓存 ([4ad301f](https://github.com/L-1124/QQMusicApi/commit/4ad301f5e4f6d079cc15b87e84fdc58161461f51)) by [@L-1124](https://github.com/L-1124)
 * 优先通过 Credential 字段判断是否过期 ([e6dd11d](https://github.com/L-1124/QQMusicApi/commit/e6dd11d5200950b51feb73b855edd5942251fdb8)) by [@L-1124](https://github.com/L-1124)
-* 使用 OrJson 加快 json 解析 ([fe1c430](https://github.com/L-1124/QQMusicApi/commit/fe1c430cf6b3423a83a980800e211893bd17030e)) by [@L-1124](https://github.com/L-1124)
+* 使用 OrJson 加快 json 解析 ([fe1c430](https://github.com/L-1124/QQMusicApi/commit/fe1c430cf6b3423a83a9100010e211893bd17030e)) by [@L-1124](https://github.com/L-1124)
 
 ### 性能优化
 

@@ -33,7 +33,7 @@ class ServerConfig(BaseModel):
     """服务器配置."""
 
     host: str = Field(default="127.0.0.1", description="绑定地址")
-    port: int = Field(default=8080, description="监听端口")
+    port: int = Field(default=10001, description="监听端口")
     workers: int = Field(default=1, description="工作进程数")
     limit_concurrency: int | None = Field(default=None, ge=1, description="Uvicorn 最大并发连接/任务数")
 
